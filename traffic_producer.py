@@ -37,6 +37,7 @@ while True:
         speed = random.randint(5, int(base_speed * 0.5))
     else:
         speed = random.randint(int(base_speed * 0.6), int(base_speed))
+        
     event = {
         "Event_time": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         "Vehicle_id": f"TN{ random.randint(10,99)}{''.join(random.sample(['A','B','C','D'], k=2))}{random.randint(1000,9999)}",
@@ -49,6 +50,8 @@ while True:
         "City": city_name,
         "congestion_level": "Congested Road" if speed < 30 else"Moderate Traffic" if speed < 60 else "Free Flow Traffic"
     }
+    
     producer.send("mytopic_traffic_events", event)
     print(f"Sent event: {event}")
+
     time.sleep(1)  # Pause for a second before sending the next event
