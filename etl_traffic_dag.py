@@ -97,11 +97,12 @@ dq_check = BashOperator(
         task_id='data_quality_check',
         bash_command="""
         hive -e "
-        SELECT COUNT(*) FROM traffic_clean_tb
+        SELECT COUNT(*) FROM road_traffic_analytics
         WHERE Speed_kmh < 0 OR Speed_kmh > 200;
         " | grep -q '^0$'
         """
     )
 
 # DAG Dependencies
+
 infra_check >> kafka_topic_check >> produce_events >> streaming_health_check >> spark_streaming >> spark_batch_clean >> spark_batch_agg >> hive_refresh >> dq_check
