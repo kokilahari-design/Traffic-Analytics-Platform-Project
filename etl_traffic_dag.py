@@ -19,7 +19,7 @@ with DAG(
 
 # Infra Health Check
 
-infra_check = BashOperator(
+    infra_check = BashOperator(
         task_id='infra_health_check',
         bash_command="""
         jps | grep -E 'NameNode|ResourceManager|Kafka|QuorumPeerMain'
@@ -28,7 +28,7 @@ infra_check = BashOperator(
 
 # Kafka Topic Check
 
-kafka_topic_check = BashOperator(
+    kafka_topic_check = BashOperator(
         task_id='kafka_topic_check',
         bash_command="""
         kafka-topics.sh --list --zookeeper localhost:2181 | grep mytopic_traffic_events
@@ -37,7 +37,7 @@ kafka_topic_check = BashOperator(
 
 # 1. Generate Kafka Traffic Events
 
-produce_events = BashOperator(
+    produce_events = BashOperator(
         task_id='generate_kafka_events',
         bash_command="""
         source /home/kokila/traffic_venv/bin/activate &&
@@ -46,13 +46,13 @@ produce_events = BashOperator(
 
 # 2. Check Spark Streaming is Running
 
-streaming_health_check = BashOperator(
+    streaming_health_check = BashOperator(
         task_id='spark_streaming_health_check',
         bash_command="jps | grep -i Spark")
 
 # 3. Spark Structured Streaming Job (Trigger / Restart if needed)
 
-spark_streaming = BashOperator(
+    spark_streaming = BashOperator(
         task_id='spark_streaming_job',
         bash_command="""
         spark-submit \
@@ -65,7 +65,7 @@ spark_streaming = BashOperator(
 
 # 4. Spark Batch Cleaning Job
 
-spark_batch_clean = BashOperator(
+    spark_batch_clean = BashOperator(
         task_id='spark_batch_cleaning',
         bash_command="""
         spark-submit \
@@ -75,7 +75,7 @@ spark_batch_clean = BashOperator(
 
 # 5. Spark Batch Aggregation Job
 
-spark_batch_agg = BashOperator(
+    spark_batch_agg = BashOperator(
         task_id='spark_batch_aggregation',
         bash_command="""
         spark-submit \
@@ -85,7 +85,7 @@ spark_batch_agg = BashOperator(
 
 # 6. Hive Aggregated Table Refresh
 
-hive_refresh = BashOperator(
+    hive_refresh = BashOperator(
         task_id='refresh_hive_tables',
         bash_command="""
         hive -e "MSCK REPAIR TABLE road_traffic_analytics"
@@ -93,7 +93,7 @@ hive_refresh = BashOperator(
 
 # 7. Data Quality Check
 
-dq_check = BashOperator(
+    dq_check = BashOperator(
         task_id='data_quality_check',
         bash_command="""
         hive -e "
@@ -106,3 +106,4 @@ dq_check = BashOperator(
 # DAG Dependencies
 
 infra_check >> kafka_topic_check >> produce_events >> streaming_health_check >> spark_streaming >> spark_batch_clean >> spark_batch_agg >> hive_refresh >> dq_check
+
